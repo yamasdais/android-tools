@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ColumnShifter">
+        <attr name="initialColumn" format="integer"/>
+        <attr name="prevInAnimation" format="reference"/>
+        <attr name="prevOutAnimation" format="reference"/>
+        <attr name="nextInAnimation" format="reference"/>
+        <attr name="nextOutAnimation" format="reference"/>
+    </declare-styleable>
+</resources>
