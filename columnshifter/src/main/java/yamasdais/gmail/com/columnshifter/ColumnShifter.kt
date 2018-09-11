@@ -7,14 +7,16 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.ViewSwitcher
 import kotlinx.android.synthetic.main.column_shifter.view.*
+import java.beans.PropertyChangeListener
+import java.beans.PropertyChangeSupport
 
-// TODO ボタン押下時データが変わる時に、Listener にイベントが渡るようにする
 // TODO attr によるプロパティ設定
 // TODO 文字列から最小幅を計算する処理の実装
 open class ColumnShifter @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0, defStyleRes: Int = 0
         ): LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
 
+    private val listeners = PropertyChangeSupport(this);
     private var initialPosition: Int = 0
     private var prevInAnimation: Int = android.R.anim.slide_in_left
     private var prevOutAnimation: Int = android.R.anim.slide_out_right
@@ -69,18 +71,46 @@ open class ColumnShifter @JvmOverloads constructor(
     }
 
     open var data: Any? = null
+        get () = field
+        set(value) {
+            if (field != value) {
+                val checker = checkDateUpdate()
+                field = value
+                adapter?.let {
+                    switcher.setCurrentText(it.currentItem.toString())
+                    prev_button.text = it.prevItem.toString()
+                    next_button.text = it.nextItem.toString()
+                }
+                checker()
+            }
+        }
+
+    val item: Any?
+        get() = adapter?.currentItem
 
     fun updateButtonState() {
         prev_button.isEnabled = (adapter?.position ?: 0) > 0
         next_button.isEnabled = (adapter?.position ?: 0) < (adapter?.getCount() ?: 0) - 1
     }
+
+    fun checkDateUpdate(): () -> Unit {
+        val oldValue = adapter?.currentItem
+        return {
+            var newValue = adapter?.currentItem
+            if (oldValue != newValue) {
+                this.listeners.firePropertyChange("item", oldValue, newValue)
+            }
+        }
+    }
     fun movePrevious() {
         isDirNext = false
         adapter?.let {
             if (it.position > 0) {
+                val checker = checkDateUpdate()
                 switcher.setText(it.prev().toString())
                 prev_button.text = it.prevItem.toString()
                 next_button.text = it.nextItem.toString()
+                checker()
             }
 
         }
@@ -91,10 +121,11 @@ open class ColumnShifter @JvmOverloads constructor(
         isDirNext = true
         adapter?.let {
             if (it.position < it.getCount() - 1) {
+                val checker = checkDateUpdate()
                 switcher.setText(it.next().toString())
                 prev_button.text = it.prevItem.toString()
                 next_button.text = it.nextItem.toString()
-
+                checker()
             }
         }
         updateButtonState()
@@ -113,13 +144,19 @@ open class ColumnShifter @JvmOverloads constructor(
         get() = adapter?.position ?: -1
         set(value) {
             adapter?.let {
-                if (it.position != value) {
-                    it.position = value
-                    switcher.setCurrentText(it.currentItem.toString())
-                    prev_button.text = it.prevItem.toString()
-                    next_button.text = it.nextItem.toString()
-                }
+                val checker = checkDateUpdate()
+                it.position = value
+                switcher.setCurrentText(it.currentItem.toString())
+                prev_button.text = it.prevItem.toString()
+                next_button.text = it.nextItem.toString()
+                checker()
             }
             updateButtonState()
         }
+
+    fun addPropertyChangeListener(listener: PropertyChangeListener) =
+            listeners.addPropertyChangeListener(listener)
+
+    fun removePropertyChangeListener(listener: PropertyChangeListener) =
+            listeners.removePropertyChangeListener(listener)
 }

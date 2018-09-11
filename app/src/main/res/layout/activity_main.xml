@@ -4,20 +4,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center"
     tools:context=".MainActivity">
 
     <yamasdais.gmail.com.columnshifter.ColumnShifter
         android:id="@+id/columnShifter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
         app:initialColumn="2"
-        app:prevInAnimation="@android:anim/fade_in"
-        app:prevOutAnimation="@android:anim/fade_out"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/disp_text"
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:prevInAnimation="@android:anim/fade_in"
+        app:prevOutAnimation="@android:anim/fade_out" />
 
+    <TextView
+        android:id="@+id/disp_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="80dp"
+        android:text="foo"
+        app:layout_constraintEnd_toStartOf="@id/columnShifter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/columnShifter" />
 
 </android.support.constraint.ConstraintLayout>
