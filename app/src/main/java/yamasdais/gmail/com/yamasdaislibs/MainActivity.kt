@@ -1,7 +1,5 @@
 package yamasdais.gmail.com.yamasdaislibs
 
-import android.content.Context
-import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Gravity
@@ -9,11 +7,19 @@ import android.view.View
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_main.*
 import yamasdais.gmail.com.columnshifter.ColumnShifterAdapter
+import yamasdais.gmail.com.toolbox.getResourceOtherLocale
+import yamasdais.gmail.com.toolbox.getStringOtherLocale
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
 import java.lang.Exception
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
+
+    fun getMusicalString(musicalLocale: Locale): (Int) -> String {
+        val res = getResourceOtherLocale(this, musicalLocale)
+        return getStringOtherLocale(res)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,16 +62,17 @@ class MainActivity : AppCompatActivity() {
 
 
                 override fun createView(): View {
-                    val text_view = TextView(context)
-                    text_view.gravity = (Gravity.TOP or Gravity.CENTER_HORIZONTAL)
-                    text_view.textSize = 36F
-                    text_view.gravity = Gravity.CENTER
+                    val textView = TextView(context)
+                    textView.gravity = (Gravity.TOP or Gravity.CENTER_HORIZONTAL)
+                    textView.textSize = 36F
+                    textView.gravity = Gravity.CENTER
 
-                    return text_view
+                    return textView
                 }
             }
 
-            columnShifter.data = "C"
+            val musResAcc = getMusicalString(Locale.JAPAN)
+            columnShifter.data = musResAcc(R.string.notename_c)
         } catch (e: Exception) {
            e.printStackTrace()
         }

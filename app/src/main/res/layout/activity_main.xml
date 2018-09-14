@@ -25,9 +25,8 @@
         android:id="@+id/disp_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
+        android:layout_marginStart="100dp"
         android:layout_marginTop="80dp"
-        android:text="foo"
         app:layout_constraintEnd_toStartOf="@id/columnShifter"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/columnShifter" />

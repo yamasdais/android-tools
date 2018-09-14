@@ -1,1 +1,1 @@
-include ':app', ':columnshifter'
+include ':app', ':columnshifter', ':toolbox'

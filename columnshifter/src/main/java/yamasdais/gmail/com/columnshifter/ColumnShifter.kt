@@ -16,7 +16,7 @@ open class ColumnShifter @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0, defStyleRes: Int = 0
         ): LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
 
-    private val listeners = PropertyChangeSupport(this);
+    private val listeners: PropertyChangeSupport
     private var initialPosition: Int = 0
     private var prevInAnimation: Int = android.R.anim.slide_in_left
     private var prevOutAnimation: Int = android.R.anim.slide_out_right
@@ -36,6 +36,8 @@ open class ColumnShifter @JvmOverloads constructor(
 
     init {
         LayoutInflater.from(context).inflate(R.layout.column_shifter, this)
+
+        listeners = PropertyChangeSupport(this)
 
         if (attrs != null) {
             val a = context.obtainStyledAttributes(attrs, R.styleable.ColumnShifter)
@@ -96,7 +98,7 @@ open class ColumnShifter @JvmOverloads constructor(
     fun checkDateUpdate(): () -> Unit {
         val oldValue = adapter?.currentItem
         return {
-            var newValue = adapter?.currentItem
+            val newValue = adapter?.currentItem
             if (oldValue != newValue) {
                 this.listeners.firePropertyChange("item", oldValue, newValue)
             }
