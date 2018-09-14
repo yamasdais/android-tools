@@ -19,7 +19,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:prevInAnimation="@android:anim/fade_in"
-        app:prevOutAnimation="@android:anim/fade_out" />
+        app:prevOutAnimation="@android:anim/fade_out"
+        app:textFontSize="30sp"
+        app:textMetricsStandard="@string/fontMetricsText"
+        />
 
     <TextView
         android:id="@+id/disp_text"

@@ -4,10 +4,11 @@ import java.util.*
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.Paint
 
 fun getResourceOtherLocale(context: Context, targetLocale: Locale): Resources {
     val dLocale = Locale.getDefault()
-    return if (dLocale.equals(targetLocale)) {
+    return if (dLocale == targetLocale) {
         context.resources
     } else {
         context.createConfigurationContext(Configuration(context.resources.configuration).apply {
@@ -16,7 +17,9 @@ fun getResourceOtherLocale(context: Context, targetLocale: Locale): Resources {
     }
 }
 
-fun getStringOtherLocale(resource: Resources)
-        : (Int) -> String = {
+fun getStringOtherLocale(resource: Resources) = {
     id: Int -> resource.getString(id)
 }
+
+inline fun calculateFontSize(retriever: (Int) -> String?, paint: Paint, resId: Int)
+        = Pair(paint.measureText(retriever(resId) ?: "H"), paint.getFontMetrics(null))

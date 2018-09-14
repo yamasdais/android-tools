@@ -16,7 +16,7 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    fun getMusicalString(musicalLocale: Locale): (Int) -> String {
+    private fun getMusicalString(musicalLocale: Locale): (Int) -> String {
         val res = getResourceOtherLocale(this, musicalLocale)
         return getStringOtherLocale(res)
     }
@@ -26,17 +26,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val context = this
         try {
-            columnShifter.addPropertyChangeListener(listener = object: PropertyChangeListener {
-                override fun propertyChange(evt: PropertyChangeEvent?) {
-                    evt?.let {
-                        if (evt.propertyName == "item") {
-                            //disp_text.text = evt.newValue as? String ?: "<null>"
-                            disp_text.text = columnShifter.item as? String ?: "<null>"
-                        }
+            columnShifter.addPropertyChangeListener(listener = PropertyChangeListener { evt ->
+                evt?.let {
+                    if (evt.propertyName == "item") {
+                        //disp_text.text = evt.newValue as? String ?: "<null>"
+                        disp_text.text = columnShifter.item as? String ?: "<null>"
                     }
                 }
-
             })
+            columnShifter.locale = Locale.US
             columnShifter.adapter = object : ColumnShifterAdapter() {
                 val format = arrayOf("%s\u266D\u266D", "%s\u266D", "%s", "%s\u266F", "%s\u266F\u266F")
                 val accidental = arrayOf("\u266D\u266D", "\u266D", "♮", "\u266F", "\u266F\u266F")
@@ -64,14 +62,13 @@ class MainActivity : AppCompatActivity() {
                 override fun createView(): View {
                     val textView = TextView(context)
                     textView.gravity = (Gravity.TOP or Gravity.CENTER_HORIZONTAL)
-                    textView.textSize = 36F
                     textView.gravity = Gravity.CENTER
 
                     return textView
                 }
             }
 
-            val musResAcc = getMusicalString(Locale.JAPAN)
+            val musResAcc = getMusicalString(columnShifter.locale)
             columnShifter.data = musResAcc(R.string.notename_c)
         } catch (e: Exception) {
            e.printStackTrace()

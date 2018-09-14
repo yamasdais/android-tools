@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">YamasdaisLibs</string>
     <string name="notename_c">C</string>
+    <string name="fontMetricsText">C##</string>
 </resources>

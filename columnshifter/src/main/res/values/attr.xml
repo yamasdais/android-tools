@@ -6,5 +6,7 @@
         <attr name="prevOutAnimation" format="reference"/>
         <attr name="nextInAnimation" format="reference"/>
         <attr name="nextOutAnimation" format="reference"/>
+        <attr name="textMetricsStandard" format="reference"/>
+        <attr name="textFontSize" format="dimension"/>
     </declare-styleable>
 </resources>

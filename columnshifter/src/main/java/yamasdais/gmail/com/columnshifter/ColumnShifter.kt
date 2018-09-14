@@ -1,17 +1,22 @@
 package yamasdais.gmail.com.columnshifter
 
 import android.content.Context
+import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.LinearLayout
-import android.widget.ViewSwitcher
+import android.widget.TextView
 import kotlinx.android.synthetic.main.column_shifter.view.*
+import yamasdais.gmail.com.toolbox.calculateFontSize
+import yamasdais.gmail.com.toolbox.getResourceOtherLocale
+import yamasdais.gmail.com.toolbox.getStringOtherLocale
 import java.beans.PropertyChangeListener
 import java.beans.PropertyChangeSupport
+import java.util.*
 
 // TODO attr によるプロパティ設定
-// TODO 文字列から最小幅を計算する処理の実装
+// TODO 文字列から最小幅を計算する処理の実装(button)
 open class ColumnShifter @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0, defStyleRes: Int = 0
         ): LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
@@ -22,6 +27,24 @@ open class ColumnShifter @JvmOverloads constructor(
     private var prevOutAnimation: Int = android.R.anim.slide_out_right
     private var nextInAnimation: Int = R.anim.slide_in_right
     private var nextOutAnimation: Int = R.anim.slide_out_left
+    private var textMetricsStandard: Int = R.string.defaultFontMetricsStandard
+    var textFontSize: Float = 120f
+
+    var locale: Locale = Locale.getDefault()
+    set(value) {
+        if (value != field) {
+            field = value
+            val res = getResourceOtherLocale(context, locale)
+            val textMetrics = calculateFontSize(getStringOtherLocale(res), Paint(), textMetricsStandard).run {
+                Pair(
+                        Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PT, this.first, res.displayMetrics)),
+                        Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PT, this.second, res.displayMetrics))
+                )
+            }
+            switcher.minimumWidth = textMetrics.first
+            switcher.minimumHeight = textMetrics.second
+        }
+    }
 
     private var isDirNext: Boolean = false
         set(value) {
@@ -57,6 +80,12 @@ open class ColumnShifter @JvmOverloads constructor(
                 if (a.hasValue(R.styleable.ColumnShifter_nextOutAnimation)) {
                     nextOutAnimation = a.getResourceId(R.styleable.ColumnShifter_nextOutAnimation, nextOutAnimation)
                 }
+                if (a.hasValue(R.styleable.ColumnShifter_textMetricsStandard)) {
+                    textMetricsStandard = a.getResourceId(R.styleable.ColumnShifter_textMetricsStandard, textMetricsStandard)
+                }
+                if (a.hasValue(R.styleable.ColumnShifter_textFontSize)) {
+                    textFontSize = a.getDimensionPixelSize(R.styleable.ColumnShifter_textFontSize, textFontSize.toInt()).toFloat()
+                }
                 a.recycle()
             }
 
@@ -73,7 +102,6 @@ open class ColumnShifter @JvmOverloads constructor(
     }
 
     open var data: Any? = null
-        get () = field
         set(value) {
             if (field != value) {
                 val checker = checkDateUpdate()
@@ -136,9 +164,11 @@ open class ColumnShifter @JvmOverloads constructor(
     open var adapter: ColumnShifterAdapter? = null
             set(value) {
                 field = value!!
-                switcher.setFactory(object: ViewSwitcher.ViewFactory {
-                    override fun makeView(): View = value.createView()
-                })
+                switcher.setFactory {
+                    (value.createView() as TextView).apply {
+                        this.setTextSize(TypedValue.COMPLEX_UNIT_PX, textFontSize)
+                    }
+                }
                 position = initialPosition
             }
 
