@@ -21,5 +21,5 @@ fun getStringOtherLocale(resource: Resources) = {
     id: Int -> resource.getString(id)
 }
 
-inline fun calculateFontSize(retriever: (Int) -> String?, paint: Paint, resId: Int)
+inline fun calculateFontRect(paint: Paint, resId: Int, retriever: (Int) -> String?)
         = Pair(paint.measureText(retriever(resId) ?: "H"), paint.getFontMetrics(null))

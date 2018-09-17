@@ -8,9 +8,7 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
 import kotlinx.android.synthetic.main.column_shifter.view.*
-import yamasdais.gmail.com.toolbox.calculateFontSize
-import yamasdais.gmail.com.toolbox.getResourceOtherLocale
-import yamasdais.gmail.com.toolbox.getStringOtherLocale
+import yamasdais.gmail.com.toolbox.*
 import java.beans.PropertyChangeListener
 import java.beans.PropertyChangeSupport
 import java.util.*
@@ -35,11 +33,11 @@ open class ColumnShifter @JvmOverloads constructor(
         if (value != field) {
             field = value
             val res = getResourceOtherLocale(context, locale)
-            val textMetrics = calculateFontSize(getStringOtherLocale(res), Paint(), textMetricsStandard).run {
-                Pair(
-                        Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PT, this.first, res.displayMetrics)),
-                        Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PT, this.second, res.displayMetrics))
-                )
+            val textMetrics = calculateFontRect(
+                    Paint().apply{textLocale = locale}, textMetricsStandard,
+                    getStringOtherLocale(res))
+                    .asIterable().iterator().toPair {
+                Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PT, it, res.displayMetrics))
             }
             switcher.minimumWidth = textMetrics.first
             switcher.minimumHeight = textMetrics.second
