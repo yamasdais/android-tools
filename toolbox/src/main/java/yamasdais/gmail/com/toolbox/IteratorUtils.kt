@@ -17,6 +17,8 @@ fun <T> Pair<T, T>.asIterable() = object: Iterable<T> {
     }
 }
 
-fun <T> Iterator<T>.toPair() = Pair(next(), next())
+fun <T> Iterator<T>.toPair() =
+        Pair(next(), next())
 
-inline fun <T, S> Iterator<T>.toPair(func: (T) -> S) = Pair(func(next()), func(next()))
+inline fun <T, S> Iterator<T>.toPair(func: (T) -> S) =
+        Pair(func(next()), func(next()))
