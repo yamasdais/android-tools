@@ -8,5 +8,7 @@
         <attr name="nextOutAnimation" format="reference"/>
         <attr name="textMetricsStandard" format="reference"/>
         <attr name="textFontSize" format="dimension"/>
+        <attr name="buttonMetricsStandard" format="reference"/>
+        <attr name="buttonFontSize" format="dimension"/>
     </declare-styleable>
 </resources>

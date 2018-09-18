@@ -1,3 +1,4 @@
 <resources>
     <string name="defaultFontMetricsStandard">H</string>
+    <string name="defaultButtonMetricsStandard">H</string>
 </resources>

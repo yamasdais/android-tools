@@ -22,6 +22,8 @@
         app:prevOutAnimation="@android:anim/fade_out"
         app:textFontSize="30sp"
         app:textMetricsStandard="@string/fontMetricsText"
+        app:buttonFontSize="20sp"
+        app:buttonMetricsStandard="@string/buttonMetricsText"
         />
 
     <TextView

@@ -26,21 +26,40 @@ open class ColumnShifter @JvmOverloads constructor(
     private var nextInAnimation: Int = R.anim.slide_in_right
     private var nextOutAnimation: Int = R.anim.slide_out_left
     private var textMetricsStandard: Int = R.string.defaultFontMetricsStandard
+    private var buttonMetricsStandard: Int = R.string.defaultButtonMetricsStandard
     var textFontSize: Float = 120f
+    private var buttonFontSize: Float = 80f
 
     var locale: Locale = Locale.getDefault()
     set(value) {
         if (value != field) {
             field = value
             val res = getResourceOtherLocale(context, locale)
+            val spCoeff = res.displayMetrics.scaledDensity
+            val paint = Paint().apply {
+                textLocale = locale
+                textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,textFontSize / spCoeff, res.displayMetrics)
+            }
             val textMetrics = calculateFontRect(
-                    Paint().apply{textLocale = locale}, textMetricsStandard,
+                    paint, textMetricsStandard,
                     getStringOtherLocale(res))
                     .asIterable().iterator().toPair {
-                Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PT, it, res.displayMetrics))
+                Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, it, res.displayMetrics))
             }
+            paint.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, buttonFontSize / spCoeff, res.displayMetrics)
+            val buttonMetrics = calculateFontRect(paint, buttonMetricsStandard,
+                    getStringOtherLocale(res))
+                    .asIterable().iterator().toPair {
+                        Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, it, res.displayMetrics))
+                    }
             switcher.minimumWidth = textMetrics.first
             switcher.minimumHeight = textMetrics.second
+            prev_button.minimumWidth = buttonMetrics.first
+            prev_button.minWidth = buttonMetrics.first
+            prev_button.minimumHeight = buttonMetrics.second
+            next_button.minimumWidth = buttonMetrics.first
+            next_button.minWidth = buttonMetrics.first
+            next_button.minimumHeight = buttonMetrics.second
         }
     }
 
@@ -83,6 +102,12 @@ open class ColumnShifter @JvmOverloads constructor(
                 }
                 if (a.hasValue(R.styleable.ColumnShifter_textFontSize)) {
                     textFontSize = a.getDimensionPixelSize(R.styleable.ColumnShifter_textFontSize, textFontSize.toInt()).toFloat()
+                }
+                if (a.hasValue(R.styleable.ColumnShifter_buttonMetricsStandard)) {
+                    buttonMetricsStandard = a.getResourceId(R.styleable.ColumnShifter_buttonMetricsStandard, buttonMetricsStandard)
+                }
+                if (a.hasValue(R.styleable.ColumnShifter_buttonFontSize)) {
+                    buttonFontSize = a.getDimensionPixelSize(R.styleable.ColumnShifter_buttonFontSize, buttonFontSize.toInt()).toFloat()
                 }
                 a.recycle()
             }
