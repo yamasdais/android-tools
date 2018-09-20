@@ -1,10 +1,14 @@
 package yamasdais.gmail.com.columnshifter
 
 import android.content.Context
+import android.gesture.Gesture
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import kotlinx.android.synthetic.main.column_shifter.view.*
@@ -18,7 +22,6 @@ import java.util.*
 open class ColumnShifter @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0, defStyleRes: Int = 0
         ): LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
-
     private val listeners: PropertyChangeSupport
     private var initialPosition: Int = 0
     private var prevInAnimation: Int = android.R.anim.slide_in_left
@@ -30,25 +33,50 @@ open class ColumnShifter @JvmOverloads constructor(
     var textFontSize: Float = 120f
     private var buttonFontSize: Float = 80f
 
+    private var gestureDetector: GestureDetector? = null
+    private val onGestureListener = object: GestureDetector.OnGestureListener {
+        override fun onShowPress(e: MotionEvent?) {
+        }
+
+        override fun onSingleTapUp(e: MotionEvent?): Boolean {
+            return false
+        }
+
+        override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
+            return false
+        }
+
+        override fun onLongPress(e: MotionEvent?) {
+        }
+
+        override fun onDown(e: MotionEvent?): Boolean {
+            return false
+        }
+
+        override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
+            return false
+        }
+    }
+
     var locale: Locale = Locale.getDefault()
     set(value) {
         if (value != field) {
             field = value
             val res = getResourceOtherLocale(context, locale)
+            val getMessage = getStringOtherLocale(res)
             val spCoeff = res.displayMetrics.scaledDensity
             val paint = Paint().apply {
                 textLocale = locale
                 textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,textFontSize / spCoeff, res.displayMetrics)
             }
             val textMetrics = calculateFontRect(
-                    paint, textMetricsStandard,
-                    getStringOtherLocale(res))
+                    paint, getMessage(textMetricsStandard))
                     .asIterable().iterator().toPair {
                 Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, it, res.displayMetrics))
             }
             paint.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, buttonFontSize / spCoeff, res.displayMetrics)
-            val buttonMetrics = calculateFontRect(paint, buttonMetricsStandard,
-                    getStringOtherLocale(res))
+            val buttonMetrics = calculateFontRect(
+                    paint, getMessage(buttonMetricsStandard))
                     .asIterable().iterator().toPair {
                         Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, it, res.displayMetrics))
                     }
@@ -112,6 +140,7 @@ open class ColumnShifter @JvmOverloads constructor(
                 a.recycle()
             }
 
+            gestureDetector = GestureDetector(context, onGestureListener)
         }
 
         prev_button.setOnClickListener {
