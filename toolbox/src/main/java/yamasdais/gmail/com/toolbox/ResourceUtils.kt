@@ -17,9 +17,9 @@ fun getResourceOtherLocale(context: Context, targetLocale: Locale): Resources {
     }
 }
 
-fun getStringOtherLocale(resource: Resources) = {
+fun getStringOtherLocale(resource: Resources): (Int)->String = {
     id: Int -> resource.getString(id)
 }
 
-fun calculateFontRect(paint: Paint, message: String?)
+fun calculateFontRect(paint: Paint, message: String?): Pair<Float, Float>
         = Pair(paint.measureText(message ?: "H"), paint.getFontMetrics(null))

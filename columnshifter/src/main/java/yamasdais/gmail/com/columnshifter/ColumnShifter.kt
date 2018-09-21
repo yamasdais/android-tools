@@ -1,14 +1,13 @@
 package yamasdais.gmail.com.columnshifter
 
 import android.content.Context
-import android.gesture.Gesture
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
-import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import kotlinx.android.synthetic.main.column_shifter.view.*
@@ -33,34 +32,64 @@ open class ColumnShifter @JvmOverloads constructor(
     var textFontSize: Float = 120f
     private var buttonFontSize: Float = 80f
 
-    private var gestureDetector: GestureDetector? = null
     private val onGestureListener = object: GestureDetector.OnGestureListener {
         override fun onShowPress(e: MotionEvent?) {
+            //Log.d("onShowPress", "Event: $e")
         }
 
         override fun onSingleTapUp(e: MotionEvent?): Boolean {
+            //Log.d("onSingleTapUp", "Event: $e")
             return false
         }
 
         override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
+            //Log.d("onScroll","Event1:$e1, Event2:$e2, X: $distanceX, Y: $distanceY")
             return false
         }
 
         override fun onLongPress(e: MotionEvent?) {
+            //Log.d("onLongPress", "Event: $e")
         }
 
         override fun onDown(e: MotionEvent?): Boolean {
+            //Log.d("onDown", "Event: $e")
             return false
         }
 
         override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
+            val xyRatio = velocityX / Math.abs(velocityY)
+            //Log.d("onFling", "X: $velocityX, Y: $velocityY, X/Y: $xyratio")
+            if (Math.abs(xyRatio) > 1.0) {
+                if (xyRatio > 0) {
+                    movePrevious()
+                } else {
+                    moveNext()
+                }
+                return true
+            }
             return false
         }
     }
+    private val gestureDetector: GestureDetector = GestureDetector(context, onGestureListener)
+
+    /*
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return gestureDetector.onTouchEvent(event) ?: super.onTouchEvent(event)
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        //Log.d("dispatchTouchEvent", "Event: $ev")
+        //gestureDetector.onTouchEvent(ev)
+        return super.dispatchTouchEvent(ev)
+        //super.dispatchTouchEvent(ev)
+        //return gestureDetector.onTouchEvent(ev)
+    }
+    */
 
     var locale: Locale = Locale.getDefault()
     set(value) {
         if (value != field) {
+            Log.d("locale", "Changed to: $field")
             field = value
             val res = getResourceOtherLocale(context, locale)
             val getMessage = getStringOtherLocale(res)
@@ -140,8 +169,11 @@ open class ColumnShifter @JvmOverloads constructor(
                 a.recycle()
             }
 
-            gestureDetector = GestureDetector(context, onGestureListener)
         }
+        switcher.setOnTouchListener {
+            v, event -> gestureDetector.onTouchEvent(event)
+        }
+        switcher.setOnClickListener {  }
 
         prev_button.setOnClickListener {
             movePrevious()
@@ -156,7 +188,7 @@ open class ColumnShifter @JvmOverloads constructor(
     open var data: Any? = null
         set(value) {
             if (field != value) {
-                val checker = checkDateUpdate()
+                val checker = checkDataUpdate()
                 field = value
                 adapter?.let {
                     switcher.setCurrentText(it.currentItem.toString())
@@ -170,12 +202,12 @@ open class ColumnShifter @JvmOverloads constructor(
     val item: Any?
         get() = adapter?.currentItem
 
-    fun updateButtonState() {
+    private fun updateButtonState() {
         prev_button.isEnabled = (adapter?.position ?: 0) > 0
         next_button.isEnabled = (adapter?.position ?: 0) < (adapter?.getCount() ?: 0) - 1
     }
 
-    fun checkDateUpdate(): () -> Unit {
+    private fun checkDataUpdate(): () -> Unit {
         val oldValue = adapter?.currentItem
         return {
             val newValue = adapter?.currentItem
@@ -185,10 +217,10 @@ open class ColumnShifter @JvmOverloads constructor(
         }
     }
     fun movePrevious() {
-        isDirNext = false
         adapter?.let {
             if (it.position > 0) {
-                val checker = checkDateUpdate()
+                isDirNext = false
+                val checker = checkDataUpdate()
                 switcher.setText(it.prev().toString())
                 prev_button.text = it.prevItem.toString()
                 next_button.text = it.nextItem.toString()
@@ -200,10 +232,10 @@ open class ColumnShifter @JvmOverloads constructor(
     }
 
     fun moveNext() {
-        isDirNext = true
         adapter?.let {
             if (it.position < it.getCount() - 1) {
-                val checker = checkDateUpdate()
+                isDirNext = true
+                val checker = checkDataUpdate()
                 switcher.setText(it.next().toString())
                 prev_button.text = it.prevItem.toString()
                 next_button.text = it.nextItem.toString()
@@ -228,7 +260,7 @@ open class ColumnShifter @JvmOverloads constructor(
         get() = adapter?.position ?: -1
         set(value) {
             adapter?.let {
-                val checker = checkDateUpdate()
+                val checker = checkDataUpdate()
                 it.position = value
                 switcher.setCurrentText(it.currentItem.toString())
                 prev_button.text = it.prevItem.toString()

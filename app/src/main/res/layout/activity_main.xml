@@ -18,8 +18,6 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:prevInAnimation="@android:anim/fade_in"
-        app:prevOutAnimation="@android:anim/fade_out"
         app:textFontSize="30sp"
         app:textMetricsStandard="@string/fontMetricsText"
         app:buttonFontSize="20sp"
