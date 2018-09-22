@@ -1,6 +1,7 @@
 package yamasdais.gmail.com.columnshifter
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.Log
@@ -16,8 +17,6 @@ import java.beans.PropertyChangeListener
 import java.beans.PropertyChangeSupport
 import java.util.*
 
-// TODO attr によるプロパティ設定
-// TODO 文字列から最小幅を計算する処理の実装(button)
 open class ColumnShifter @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0, defStyleRes: Int = 0
         ): LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
@@ -58,7 +57,7 @@ open class ColumnShifter @JvmOverloads constructor(
 
         override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
             val xyRatio = velocityX / Math.abs(velocityY)
-            //Log.d("onFling", "X: $velocityX, Y: $velocityY, X/Y: $xyratio")
+            //Log.d("onFling", "X: $velocityX, Y: $velocityY, X/Y: $xyRatio")
             if (Math.abs(xyRatio) > 1.0) {
                 if (xyRatio > 0) {
                     movePrevious()
@@ -137,8 +136,9 @@ open class ColumnShifter @JvmOverloads constructor(
         listeners = PropertyChangeSupport(this)
 
         if (attrs != null) {
-            val a = context.obtainStyledAttributes(attrs, R.styleable.ColumnShifter)
-            a?.let {
+            val typedArray = context.obtainStyledAttributes(attrs, R.styleable.ColumnShifter)
+            typedArray?.let { ta ->
+                /*
                 if (a.hasValue(R.styleable.ColumnShifter_initialColumn)) {
                     initialPosition = a.getInteger(R.styleable.ColumnShifter_initialColumn, 0)
                 }
@@ -166,7 +166,30 @@ open class ColumnShifter @JvmOverloads constructor(
                 if (a.hasValue(R.styleable.ColumnShifter_buttonFontSize)) {
                     buttonFontSize = a.getDimensionPixelSize(R.styleable.ColumnShifter_buttonFontSize, buttonFontSize.toInt()).toFloat()
                 }
-                a.recycle()
+                */
+                sequenceOf<AttributeReader<*>>(
+                        AttributeReader(TypedArray::getInteger, R.styleable.ColumnShifter_initialColumn,
+                                initialPosition) { initialPosition = it },
+                        AttributeReader(TypedArray::getResourceId, R.styleable.ColumnShifter_prevInAnimation,
+                                prevInAnimation) { prevInAnimation = it },
+                        AttributeReader(TypedArray::getResourceId, R.styleable.ColumnShifter_prevOutAnimation,
+                                prevOutAnimation) { prevOutAnimation = it },
+                        AttributeReader(TypedArray::getResourceId, R.styleable.ColumnShifter_nextInAnimation,
+                                nextInAnimation) { nextInAnimation = it },
+                        AttributeReader(TypedArray::getResourceId, R.styleable.ColumnShifter_nextOutAnimation,
+                                nextOutAnimation) { nextOutAnimation = it },
+                        AttributeReader(TypedArray::getResourceId, R.styleable.ColumnShifter_textMetricsStandard,
+                                textMetricsStandard) { textMetricsStandard = it },
+                        AttributeReader(TypedArray::getDimensionPixelSize, R.styleable.ColumnShifter_textFontSize,
+                                textFontSize.toInt()) { textFontSize = it.toFloat() },
+                        AttributeReader(TypedArray::getResourceId, R.styleable.ColumnShifter_buttonMetricsStandard,
+                                buttonMetricsStandard) { buttonMetricsStandard = it },
+                        AttributeReader(TypedArray::getDimensionPixelSize, R.styleable.ColumnShifter_buttonFontSize,
+                                buttonFontSize.toInt()) { buttonFontSize = it.toFloat() }
+                ).forEach {
+                    readAttribute(ta, it)
+                }
+                typedArray.recycle()
             }
 
         }
