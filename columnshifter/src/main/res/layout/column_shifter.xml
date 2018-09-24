@@ -13,7 +13,9 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:minHeight="0dp"
-        android:padding="2dp"/>
+        android:padding="2dp"
+        android:drawablePadding="0dp"
+        />
 
     <TextSwitcher
         android:id="@+id/switcher"
@@ -29,5 +31,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:minHeight="0dp"
-        android:padding="2dp"/>
+        android:padding="2dp"
+        android:drawablePadding="0dp"
+        />
 </LinearLayout>

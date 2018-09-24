@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2018. Yamasdais@gmail.com.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package yamasdais.gmail.com.columnshifter
 
 import android.content.Context
@@ -30,6 +54,9 @@ open class ColumnShifter @JvmOverloads constructor(
     private var buttonMetricsStandard: Int = R.string.defaultButtonMetricsStandard
     var textFontSize: Float = 120f
     private var buttonFontSize: Float = 80f
+    companion object {
+        const val iconImageWidth = 12
+    }
 
     private val onGestureListener = object: GestureDetector.OnGestureListener {
         override fun onShowPress(e: MotionEvent?) {
@@ -93,6 +120,7 @@ open class ColumnShifter @JvmOverloads constructor(
             val res = getResourceOtherLocale(context, locale)
             val getMessage = getStringOtherLocale(res)
             val spCoeff = res.displayMetrics.scaledDensity
+            val iconWidth = (iconImageWidth * res.displayMetrics.density).toInt()
             val paint = Paint().apply {
                 textLocale = locale
                 textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,textFontSize / spCoeff, res.displayMetrics)
@@ -110,11 +138,11 @@ open class ColumnShifter @JvmOverloads constructor(
                     }
             switcher.minimumWidth = textMetrics.first
             switcher.minimumHeight = textMetrics.second
-            prev_button.minimumWidth = buttonMetrics.first
-            prev_button.minWidth = buttonMetrics.first
+            prev_button.minimumWidth = buttonMetrics.first + iconWidth
+            prev_button.minWidth = buttonMetrics.first + iconWidth
             prev_button.minimumHeight = buttonMetrics.second
-            next_button.minimumWidth = buttonMetrics.first
-            next_button.minWidth = buttonMetrics.first
+            next_button.minimumWidth = buttonMetrics.first + iconWidth
+            next_button.minWidth = buttonMetrics.first + iconWidth
             next_button.minimumHeight = buttonMetrics.second
         }
     }
@@ -194,7 +222,7 @@ open class ColumnShifter @JvmOverloads constructor(
 
         }
         switcher.setOnTouchListener {
-            v, event -> gestureDetector.onTouchEvent(event)
+            _, event -> gestureDetector.onTouchEvent(event)
         }
         switcher.setOnClickListener {  }
 
@@ -226,8 +254,22 @@ open class ColumnShifter @JvmOverloads constructor(
         get() = adapter?.currentItem
 
     private fun updateButtonState() {
-        prev_button.isEnabled = (adapter?.position ?: 0) > 0
-        next_button.isEnabled = (adapter?.position ?: 0) < (adapter?.getCount() ?: 0) - 1
+        //prev_button.isEnabled = (adapter?.position ?: 0) > 0
+        //next_button.isEnabled = (adapter?.position ?: 0) < (adapter?.getCount() ?: 0) - 1
+        adapter?.let {
+            prev_button.isEnabled = it.position > 0
+            next_button.isEnabled = it.position < it.getCount() - 1
+            if (it.position == 0) {
+                prev_button.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_chevron_left_gray_12dp,0, 0, 0)
+            } else {
+                prev_button.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_chevron_left_black_12dp,0, 0, 0)
+            }
+            if (it.position == it.getCount() - 1) {
+                next_button.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_chevron_right_gray_12dp, 0)
+            } else {
+                next_button.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_chevron_right_black_12dp, 0)
+            }
+        }
     }
 
     private fun checkDataUpdate(): () -> Unit {
@@ -298,4 +340,5 @@ open class ColumnShifter @JvmOverloads constructor(
 
     fun removePropertyChangeListener(listener: PropertyChangeListener) =
             listeners.removePropertyChangeListener(listener)
+
 }
