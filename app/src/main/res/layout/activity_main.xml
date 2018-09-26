@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
     <yamasdais.gmail.com.slipcolumns.SlipColumnsList
-        android:id="@+id/columnShifter"
+        android:id="@+id/slipColumnsList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
@@ -30,8 +30,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
         android:layout_marginTop="80dp"
-        app:layout_constraintEnd_toStartOf="@id/columnShifter"
+        app:layout_constraintEnd_toStartOf="@id/slipColumnsList"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/columnShifter" />
+        app:layout_constraintTop_toTopOf="@id/slipColumnsList" />
 
 </android.support.constraint.ConstraintLayout>

@@ -1,1 +1,1 @@
-include ':app', ':columnshifter', ':toolbox'
+include ':app', ':slipcolumns', ':toolbox'

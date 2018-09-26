@@ -24,22 +24,22 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val context = this
         try {
-            columnShifter.addPropertyChangeListener(listener = PropertyChangeListener { evt ->
+            slipColumnsList.addPropertyChangeListener(listener = PropertyChangeListener { evt ->
                 evt?.let {
                     if (evt.propertyName == "item") {
                         //disp_text.text = evt.newValue as? String ?: "<null>"
-                        disp_text.text = columnShifter.item as? String ?: "<null>"
+                        disp_text.text = slipColumnsList.item as? String ?: "<null>"
                     }
                 }
             })
-            columnShifter.locale = Locale.JAPAN
-            columnShifter.adapter = object : SlipColumnsDataBinder() {
+            slipColumnsList.locale = Locale.JAPAN
+            slipColumnsList.adapter = object : SlipColumnsDataBinder() {
                 val format = arrayOf("%s\u266D\u266D", "%s\u266D", "%s", "%s\u266F", "%s\u266F\u266F")
                 val accidental = arrayOf("\u266D\u266D", "\u266D", "♮", "\u266F", "\u266F\u266F")
 
                 override fun getColumnCount(): Int = format.size
 
-                override fun get(i: Int): Any = if (i < 0) { "" } else { String.format(format[i], columnShifter.data) }
+                override fun get(i: Int): Any = if (i < 0) { "" } else { String.format(format[i], slipColumnsList.data) }
 
                 override val prevColumnItem: Any
                     get() =
@@ -66,8 +66,8 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            val musResAcc = getMusicalString(columnShifter.locale)
-            columnShifter.data = musResAcc(R.string.notename_c)
+            val musResAcc = getMusicalString(slipColumnsList.locale)
+            slipColumnsList.data = musResAcc(R.string.notename_c)
         } catch (e: Exception) {
            e.printStackTrace()
         }

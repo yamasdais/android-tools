@@ -36,7 +36,6 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import kotlinx.android.synthetic.main.slipcolumns_list.view.*
-import yamasdais.gmail.com.columnshifter.R
 import yamasdais.gmail.com.toolbox.*
 import java.beans.PropertyChangeListener
 import java.beans.PropertyChangeSupport
