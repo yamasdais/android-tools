@@ -6,7 +6,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_main.*
-import yamasdais.gmail.com.columnshifter.ColumnShifterAdapter
+import yamasdais.gmail.com.slipcolumns.SlipColumnsDataBinder
 import yamasdais.gmail.com.toolbox.getResourceOtherLocale
 import yamasdais.gmail.com.toolbox.getStringOtherLocale
 import java.beans.PropertyChangeListener
@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
                 }
             })
             columnShifter.locale = Locale.JAPAN
-            columnShifter.adapter = object : ColumnShifterAdapter() {
+            columnShifter.adapter = object : SlipColumnsDataBinder() {
                 val format = arrayOf("%s\u266D\u266D", "%s\u266D", "%s", "%s\u266F", "%s\u266F\u266F")
                 val accidental = arrayOf("\u266D\u266D", "\u266D", "♮", "\u266F", "\u266F\u266F")
 

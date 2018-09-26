@@ -1,8 +1,8 @@
-package yamasdais.gmail.com.columnshifter
+package yamasdais.gmail.com.slipcolumns
 
 import android.view.View
 
-abstract class ColumnShifterAdapter {
+abstract class SlipColumnsDataBinder {
     abstract fun getColumnCount(): Int
 
     var columnPosition: Int = -1

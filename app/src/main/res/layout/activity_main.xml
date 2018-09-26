@@ -7,7 +7,7 @@
     android:layout_gravity="center"
     tools:context=".MainActivity">
 
-    <yamasdais.gmail.com.columnshifter.ColumnShifter
+    <yamasdais.gmail.com.slipcolumns.SlipColumnsList
         android:id="@+id/columnShifter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

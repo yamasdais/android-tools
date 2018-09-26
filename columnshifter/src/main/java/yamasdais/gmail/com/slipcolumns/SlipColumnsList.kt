@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package yamasdais.gmail.com.columnshifter
+package yamasdais.gmail.com.slipcolumns
 
 import android.content.Context
 import android.content.res.TypedArray
@@ -35,13 +35,14 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
-import kotlinx.android.synthetic.main.column_shifter.view.*
+import kotlinx.android.synthetic.main.slipcolumns_list.view.*
+import yamasdais.gmail.com.columnshifter.R
 import yamasdais.gmail.com.toolbox.*
 import java.beans.PropertyChangeListener
 import java.beans.PropertyChangeSupport
 import java.util.*
 
-open class ColumnShifter @JvmOverloads constructor(
+open class SlipColumnsList @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0, defStyleRes: Int = 0
         ): LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
     private val listeners: PropertyChangeSupport
@@ -162,31 +163,31 @@ open class ColumnShifter @JvmOverloads constructor(
         }
 
     init {
-        View.inflate(context, R.layout.column_shifter, this)
+        View.inflate(context, R.layout.slipcolumns_list, this)
 
         listeners = PropertyChangeSupport(this)
 
         if (attrs != null) {
-            val typedArray = context.obtainStyledAttributes(attrs, R.styleable.ColumnShifter)
+            val typedArray = context.obtainStyledAttributes(attrs, R.styleable.SlipColumnsList)
             typedArray?.let { ta ->
                 sequenceOf<AttributeReader<*>>(
-                        AttributeReader(TypedArray::getInteger, R.styleable.ColumnShifter_initialColumn,
+                        AttributeReader(TypedArray::getInteger, R.styleable.SlipColumnsList_initialColumn,
                                 initialPosition) { initialPosition = it },
-                        AttributeReader(TypedArray::getResourceId, R.styleable.ColumnShifter_prevInAnimation,
+                        AttributeReader(TypedArray::getResourceId, R.styleable.SlipColumnsList_prevInAnimation,
                                 prevInAnimation) { prevInAnimation = it },
-                        AttributeReader(TypedArray::getResourceId, R.styleable.ColumnShifter_prevOutAnimation,
+                        AttributeReader(TypedArray::getResourceId, R.styleable.SlipColumnsList_prevOutAnimation,
                                 prevOutAnimation) { prevOutAnimation = it },
-                        AttributeReader(TypedArray::getResourceId, R.styleable.ColumnShifter_nextInAnimation,
+                        AttributeReader(TypedArray::getResourceId, R.styleable.SlipColumnsList_nextInAnimation,
                                 nextInAnimation) { nextInAnimation = it },
-                        AttributeReader(TypedArray::getResourceId, R.styleable.ColumnShifter_nextOutAnimation,
+                        AttributeReader(TypedArray::getResourceId, R.styleable.SlipColumnsList_nextOutAnimation,
                                 nextOutAnimation) { nextOutAnimation = it },
-                        AttributeReader(TypedArray::getResourceId, R.styleable.ColumnShifter_textMetricsStandard,
+                        AttributeReader(TypedArray::getResourceId, R.styleable.SlipColumnsList_textMetricsStandard,
                                 textMetricsStandard) { textMetricsStandard = it },
-                        AttributeReader(TypedArray::getDimensionPixelSize, R.styleable.ColumnShifter_textFontSize,
+                        AttributeReader(TypedArray::getDimensionPixelSize, R.styleable.SlipColumnsList_textFontSize,
                                 textFontSize.toInt()) { textFontSize = it.toFloat() },
-                        AttributeReader(TypedArray::getResourceId, R.styleable.ColumnShifter_buttonMetricsStandard,
+                        AttributeReader(TypedArray::getResourceId, R.styleable.SlipColumnsList_buttonMetricsStandard,
                                 buttonMetricsStandard) { buttonMetricsStandard = it },
-                        AttributeReader(TypedArray::getDimensionPixelSize, R.styleable.ColumnShifter_buttonFontSize,
+                        AttributeReader(TypedArray::getDimensionPixelSize, R.styleable.SlipColumnsList_buttonFontSize,
                                 buttonFontSize.toInt()) { buttonFontSize = it.toFloat() }
                 ).forEach {
                     readAttribute(ta, it)
@@ -287,7 +288,7 @@ open class ColumnShifter @JvmOverloads constructor(
         updateButtonState()
     }
 
-    open var adapter: ColumnShifterAdapter? = null
+    open var adapter: SlipColumnsDataBinder? = null
             set(value) {
                 field = value!!
                 switcher.setFactory {
