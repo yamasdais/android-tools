@@ -31,8 +31,8 @@ import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
 import android.view.GestureDetector
-import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import kotlinx.android.synthetic.main.column_shifter.view.*
@@ -123,18 +123,21 @@ open class ColumnShifter @JvmOverloads constructor(
             val iconWidth = (iconImageWidth * res.displayMetrics.density).toInt()
             val paint = Paint().apply {
                 textLocale = locale
-                textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,textFontSize / spCoeff, res.displayMetrics)
+                textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
+                        textFontSize / spCoeff, res.displayMetrics)
             }
             val textMetrics = calculateFontRect(
                     paint, getMessage(textMetricsStandard))
                     .asIterable().iterator().toPair {
                 Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, it, res.displayMetrics))
             }
-            paint.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, buttonFontSize / spCoeff, res.displayMetrics)
+            paint.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
+                    buttonFontSize / spCoeff, res.displayMetrics)
             val buttonMetrics = calculateFontRect(
                     paint, getMessage(buttonMetricsStandard))
                     .asIterable().iterator().toPair {
-                        Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, it, res.displayMetrics))
+                        Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX,
+                                it, res.displayMetrics))
                     }
             switcher.minimumWidth = textMetrics.first
             switcher.minimumHeight = textMetrics.second
@@ -159,42 +162,13 @@ open class ColumnShifter @JvmOverloads constructor(
         }
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.column_shifter, this)
+        View.inflate(context, R.layout.column_shifter, this)
 
         listeners = PropertyChangeSupport(this)
 
         if (attrs != null) {
             val typedArray = context.obtainStyledAttributes(attrs, R.styleable.ColumnShifter)
             typedArray?.let { ta ->
-                /*
-                if (a.hasValue(R.styleable.ColumnShifter_initialColumn)) {
-                    initialPosition = a.getInteger(R.styleable.ColumnShifter_initialColumn, 0)
-                }
-                if (a.hasValue(R.styleable.ColumnShifter_prevInAnimation)) {
-                    prevInAnimation = a.getResourceId(R.styleable.ColumnShifter_prevInAnimation, prevInAnimation)
-                }
-                if (a.hasValue(R.styleable.ColumnShifter_prevOutAnimation)) {
-                    prevOutAnimation = a.getResourceId(R.styleable.ColumnShifter_prevOutAnimation, prevOutAnimation)
-                }
-                if (a.hasValue(R.styleable.ColumnShifter_nextInAnimation)) {
-                    nextInAnimation = a.getResourceId(R.styleable.ColumnShifter_nextInAnimation, nextInAnimation)
-                }
-                if (a.hasValue(R.styleable.ColumnShifter_nextOutAnimation)) {
-                    nextOutAnimation = a.getResourceId(R.styleable.ColumnShifter_nextOutAnimation, nextOutAnimation)
-                }
-                if (a.hasValue(R.styleable.ColumnShifter_textMetricsStandard)) {
-                    textMetricsStandard = a.getResourceId(R.styleable.ColumnShifter_textMetricsStandard, textMetricsStandard)
-                }
-                if (a.hasValue(R.styleable.ColumnShifter_textFontSize)) {
-                    textFontSize = a.getDimensionPixelSize(R.styleable.ColumnShifter_textFontSize, textFontSize.toInt()).toFloat()
-                }
-                if (a.hasValue(R.styleable.ColumnShifter_buttonMetricsStandard)) {
-                    buttonMetricsStandard = a.getResourceId(R.styleable.ColumnShifter_buttonMetricsStandard, buttonMetricsStandard)
-                }
-                if (a.hasValue(R.styleable.ColumnShifter_buttonFontSize)) {
-                    buttonFontSize = a.getDimensionPixelSize(R.styleable.ColumnShifter_buttonFontSize, buttonFontSize.toInt()).toFloat()
-                }
-                */
                 sequenceOf<AttributeReader<*>>(
                         AttributeReader(TypedArray::getInteger, R.styleable.ColumnShifter_initialColumn,
                                 initialPosition) { initialPosition = it },
@@ -243,8 +217,8 @@ open class ColumnShifter @JvmOverloads constructor(
                 field = value
                 adapter?.let {
                     switcher.setCurrentText(it.currentItem.toString())
-                    prev_button.text = it.prevItem.toString()
-                    next_button.text = it.nextItem.toString()
+                    prev_button.text = it.prevColumnItem.toString()
+                    next_button.text = it.nextColumnItem.toString()
                 }
                 checker()
             }
@@ -254,20 +228,22 @@ open class ColumnShifter @JvmOverloads constructor(
         get() = adapter?.currentItem
 
     private fun updateButtonState() {
-        //prev_button.isEnabled = (adapter?.position ?: 0) > 0
-        //next_button.isEnabled = (adapter?.position ?: 0) < (adapter?.getCount() ?: 0) - 1
         adapter?.let {
-            prev_button.isEnabled = it.position > 0
-            next_button.isEnabled = it.position < it.getCount() - 1
-            if (it.position == 0) {
-                prev_button.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_chevron_left_gray_12dp,0, 0, 0)
+            prev_button.isEnabled = it.columnPosition > 0
+            next_button.isEnabled = it.columnPosition < it.getColumnCount() - 1
+            if (it.columnPosition == 0) {
+                prev_button.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.ic_chevron_left_gray_12dp,0, 0, 0)
             } else {
-                prev_button.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_chevron_left_black_12dp,0, 0, 0)
+                prev_button.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.ic_chevron_left_black_12dp,0, 0, 0)
             }
-            if (it.position == it.getCount() - 1) {
-                next_button.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_chevron_right_gray_12dp, 0)
+            if (it.columnPosition == it.getColumnCount() - 1) {
+                next_button.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        0, 0, R.drawable.ic_chevron_right_gray_12dp, 0)
             } else {
-                next_button.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_chevron_right_black_12dp, 0)
+                next_button.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        0, 0, R.drawable.ic_chevron_right_black_12dp, 0)
             }
         }
     }
@@ -283,12 +259,12 @@ open class ColumnShifter @JvmOverloads constructor(
     }
     fun movePrevious() {
         adapter?.let {
-            if (it.position > 0) {
+            if (it.columnPosition > 0) {
                 isDirNext = false
                 val checker = checkDataUpdate()
-                switcher.setText(it.prev().toString())
-                prev_button.text = it.prevItem.toString()
-                next_button.text = it.nextItem.toString()
+                switcher.setText(it.prevColumn().toString())
+                prev_button.text = it.prevColumnItem.toString()
+                next_button.text = it.nextColumnItem.toString()
                 checker()
             }
 
@@ -298,12 +274,13 @@ open class ColumnShifter @JvmOverloads constructor(
 
     fun moveNext() {
         adapter?.let {
-            if (it.position < it.getCount() - 1) {
+            if (it.columnPosition < it.getColumnCount() - 1) {
+                isDirNext = false
                 isDirNext = true
                 val checker = checkDataUpdate()
-                switcher.setText(it.next().toString())
-                prev_button.text = it.prevItem.toString()
-                next_button.text = it.nextItem.toString()
+                switcher.setText(it.nextColumn().toString())
+                prev_button.text = it.prevColumnItem.toString()
+                next_button.text = it.nextColumnItem.toString()
                 checker()
             }
         }
@@ -322,14 +299,14 @@ open class ColumnShifter @JvmOverloads constructor(
             }
 
     var position: Int
-        get() = adapter?.position ?: -1
+        get() = adapter?.columnPosition ?: -1
         set(value) {
             adapter?.let {
                 val checker = checkDataUpdate()
-                it.position = value
+                it.columnPosition = value
                 switcher.setCurrentText(it.currentItem.toString())
-                prev_button.text = it.prevItem.toString()
-                next_button.text = it.nextItem.toString()
+                prev_button.text = it.prevColumnItem.toString()
+                next_button.text = it.nextColumnItem.toString()
                 checker()
             }
             updateButtonState()

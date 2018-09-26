@@ -1,7 +1,7 @@
 package yamasdais.gmail.com.yamasdaislibs
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
@@ -9,10 +9,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import yamasdais.gmail.com.columnshifter.ColumnShifterAdapter
 import yamasdais.gmail.com.toolbox.getResourceOtherLocale
 import yamasdais.gmail.com.toolbox.getStringOtherLocale
-import yamasdais.gmail.com.toolbox.asIterable
-import yamasdais.gmail.com.toolbox.toPair
 import java.beans.PropertyChangeListener
-import java.lang.Exception
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -40,23 +37,23 @@ class MainActivity : AppCompatActivity() {
                 val format = arrayOf("%s\u266D\u266D", "%s\u266D", "%s", "%s\u266F", "%s\u266F\u266F")
                 val accidental = arrayOf("\u266D\u266D", "\u266D", "♮", "\u266F", "\u266F\u266F")
 
-                override fun getCount(): Int = format.size
+                override fun getColumnCount(): Int = format.size
 
                 override fun get(i: Int): Any = if (i < 0) { "" } else { String.format(format[i], columnShifter.data) }
 
-                override val prevItem: Any
+                override val prevColumnItem: Any
                     get() =
-                        if (position == 0) {
+                        if (columnPosition == 0) {
                             ""
                         } else {
-                            accidental[position-1]
+                            accidental[columnPosition-1]
                         }
-                override val nextItem: Any
+                override val nextColumnItem: Any
                     get() =
-                        if (position + 1 == getCount()) {
+                        if (columnPosition + 1 == getColumnCount()) {
                             ""
                         } else {
-                            accidental[position+1]
+                            accidental[columnPosition+1]
                         }
 
 

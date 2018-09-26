@@ -3,44 +3,44 @@ package yamasdais.gmail.com.columnshifter
 import android.view.View
 
 abstract class ColumnShifterAdapter {
-    abstract fun getCount(): Int
+    abstract fun getColumnCount(): Int
 
-    var position: Int = -1
+    var columnPosition: Int = -1
 
     abstract fun get(i: Int): Any
 
     abstract fun createView(): View
 
-    open val prevItem: Any
+    open val prevColumnItem: Any
         get() =
-            if (position == 0) {
+            if (columnPosition == 0) {
                 ""
             } else {
-                get(position - 1)
+                get(columnPosition - 1)
             }
 
-    open val nextItem: Any
+    open val nextColumnItem: Any
         get() =
-            if (position + 1 == getCount()) {
+            if (columnPosition + 1 == getColumnCount()) {
                 ""
             } else {
-                get(position + 1)
+                get(columnPosition + 1)
             }
 
     open val currentItem: Any
-        get() = get(position)
+        get() = get(columnPosition)
 
-    open fun prev(): Any =
-            if (position < 1) {
-                throw IndexOutOfBoundsException("Cannot move to previous item from: $position")
+    open fun prevColumn(): Any =
+            if (columnPosition < 1) {
+                throw IndexOutOfBoundsException("Cannot move to previous item from: $columnPosition")
             } else {
-                get(--position)
+                get(--columnPosition)
             }
 
-    open fun next(): Any =
-            if (position + 1 >= getCount()) {
-                throw IndexOutOfBoundsException("Cannot exceed ${getCount()} from: $position")
+    open fun nextColumn(): Any =
+            if (columnPosition + 1 >= getColumnCount()) {
+                throw IndexOutOfBoundsException("Cannot exceed ${getColumnCount()} from: $columnPosition")
             } else {
-                get(++position)
+                get(++columnPosition)
             }
 }
