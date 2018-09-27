@@ -1,4 +1,4 @@
-package yamasdais.gmail.com.columnshifter;
+package yamasdais.gmail.com.slipcolumns;
 
 import org.junit.Test;
 
