@@ -22,27 +22,20 @@
  * SOFTWARE.
  */
 
-package yamasdais.gmail.com.toolbox
+package yamasdais.gmail.com.localeselector;
 
-fun <T> Pair<T, T>.asIterable() = object: Iterable<T> {
-    override fun iterator(): Iterator<T> {
-        return object: Iterator<T> {
-            var wasEnd: Boolean? = null
-            override fun hasNext(): Boolean =
-                    wasEnd == true
+import org.junit.Test;
 
-            override fun next(): T =
-                when (wasEnd) {
-                    null -> { wasEnd = false; first }
-                    false -> { wasEnd = true; second }
-                    true -> throw NoSuchElementException()
-                }
-        }
+import static org.junit.Assert.*;
+
+/**
+ * Example local unit test, which will execute on the development machine (host).
+ *
+ * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ */
+public class ExampleUnitTest {
+    @Test
+    public void addition_isCorrect() {
+        assertEquals(4, 2 + 2);
     }
 }
-
-fun <T> Iterator<T>.toPair() =
-        Pair(next(), next())
-
-inline fun <T, S> Iterator<T>.toPair(func: (T) -> S) =
-        Pair(func(next()), func(next()))

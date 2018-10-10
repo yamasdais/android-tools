@@ -3,4 +3,5 @@
     <string name="app_name">YamasdaisLibs</string>
     <string name="notename_c">ハ</string>
     <string name="fontMetricsText">重嬰ハ</string>
+    <string name="buttonMetricsText">重嬰</string>
 </resources>

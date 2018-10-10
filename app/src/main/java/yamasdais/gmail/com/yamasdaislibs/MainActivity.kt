@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             })
-            slipColumnsList.locale = Locale.JAPAN
+            slipColumnsList.locale = Locale("ja")
             slipColumnsList.adapter = object : SlipColumnsDataBinder() {
                 val format = arrayOf("%s\u266D\u266D", "%s\u266D", "%s", "%s\u266F", "%s\u266F\u266F")
                 val accidental = arrayOf("\u266D\u266D", "\u266D", "♮", "\u266F", "\u266F\u266F")
@@ -92,6 +92,8 @@ class MainActivity : AppCompatActivity() {
 
             val musResAcc = getMusicalString(slipColumnsList.locale)
             slipColumnsList.data = musResAcc(R.string.notename_c)
+
+            langCountryIconView.locale = Locale("ja", "JP")
         } catch (e: Exception) {
            e.printStackTrace()
         }

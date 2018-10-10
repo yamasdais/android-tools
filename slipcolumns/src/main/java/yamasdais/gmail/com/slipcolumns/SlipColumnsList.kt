@@ -275,7 +275,7 @@ open class SlipColumnsList @JvmOverloads constructor(
     fun moveNext() {
         adapter?.let {
             if (it.columnPosition < it.getColumnCount() - 1) {
-                isDirNext = false
+                //isDirNext = false
                 isDirNext = true
                 val checker = checkDataUpdate()
                 switcher.setText(it.nextColumn().toString())
